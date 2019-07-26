@@ -1,0 +1,2 @@
+class TodoListRequestObject:
+    filters = None
