@@ -26,7 +26,7 @@ class MemRepo:
     def item(self, id=None):
         current_todo = None
         for todo in self.data:
-            if todo['id'] == id:
+            if str(todo['id']) == id:
                 current_todo = todo
 
         if current_todo is None:
