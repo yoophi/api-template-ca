@@ -9,7 +9,7 @@ class TodoJsonEncoder(json.JSONEncoder):
                 'id': str(o.id),
                 'title': o.title,
                 'is_done': o.is_done,
-                'created_at': o.created_at.isoformat(),
+                'created_at': o.created_at,
             }
             return to_serialize
         except AttributeError:
