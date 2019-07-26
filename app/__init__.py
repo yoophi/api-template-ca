@@ -8,7 +8,9 @@ from app.extensions import cors, jwt, ma
 
 
 def init_extensions(app):
-    db.init_app(app)
+    if app.config['REPO_ENGINE'] == 'MYSQL':
+        db.init_app(app)
+
     cors.init_app(app, resources={r"/*": {"origins": "*"}, })
     jwt.init_app(app)
     ma.init_app(app)
@@ -53,12 +55,6 @@ def init_blueprint(app):
                 'swagger': url_for('swagger.spec', _external=True),
             },
         })
-
-    @app.teardown_request
-    def teardown_request(exception):
-        if exception:
-            db.session.rollback()
-        db.session.remove()
 
     from app.api import api as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
