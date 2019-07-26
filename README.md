@@ -1,6 +1,6 @@
-# api-template
+# api-template-ca
 
-API 서비스 개발을 위한 템플릿
+API 서비스 개발을 위한 템플릿에 Clean Architecture 기반의 디자인패턴을 적용한 샘플입니다.
 
 TODO:
 
