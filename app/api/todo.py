@@ -5,6 +5,7 @@ from flask import Response
 from app.api import api
 from app.constants import STATUS_CODES
 from app.request_objects.todo_item import TodoItemRequestObject
+from app.request_objects.todo_list import TodoListRequestObject
 from app.serializer import TodoJsonEncoder
 from app.use_cases.todo_item import TodoItemUseCase
 from app.use_cases.todo_list import TodoListUseCase
@@ -13,7 +14,7 @@ from app.use_cases.todo_list import TodoListUseCase
 @api.route('/v1.0/todos')
 def todo_list():
     use_case = TodoListUseCase()
-    response = use_case.execute()
+    response = use_case.execute(TodoListRequestObject())
 
     return Response(
         json.dumps(response.value, cls=TodoJsonEncoder),
@@ -22,7 +23,7 @@ def todo_list():
     )
 
 
-@api.route('/v1.0/todo/<id>')
+@api.route('/v1.0/todos/<id>')
 def todo_item(id):
     request_object = TodoItemRequestObject.from_dict({'id': id})
     use_case = TodoItemUseCase()
