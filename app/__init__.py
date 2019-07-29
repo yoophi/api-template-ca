@@ -1,10 +1,11 @@
+from celery import Celery
 from flask import Flask
 from flask import url_for, jsonify, request
 
 from app.__meta__ import __api_name__, __version__
 from app.config import config
 from app.database import db
-from app.extensions import cors, jwt, ma
+from app.extensions import cors, jwt, ma, mail
 
 
 def init_extensions(app):
@@ -14,6 +15,7 @@ def init_extensions(app):
     cors.init_app(app, resources={r"/*": {"origins": "*"}, })
     jwt.init_app(app)
     ma.init_app(app)
+    mail.init_app(app)
 
 
 def init_blueprint(app):
@@ -66,12 +68,38 @@ def init_blueprint(app):
     app.register_blueprint(swagger_bp, url_prefix='/swagger')
 
 
-def create_app(config_name='default'):
+def create_app_min(config_name='default'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
     init_extensions(app)
+    # init_blueprint(app)
+
+    return app
+
+
+def create_celery(config_name='default'):
+    app = create_app_min(config_name)
+    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+
+    celery.Task = ContextTask
+
+    return celery
+
+
+def create_app(config_name='default'):
+    app = create_app_min(config_name)
+
     init_blueprint(app)
 
     return app
