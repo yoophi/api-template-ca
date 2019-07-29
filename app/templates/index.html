@@ -42,7 +42,7 @@
             // send ajax POST request to start background job
             $.ajax({
                 type: 'POST',
-                url: '/longtask',
+                url: '/main/longtask',
                 success: function(data, status, request) {
                     status_url = request.getResponseHeader('Location');
                     update_progress(status_url, nanobar, div[0]);

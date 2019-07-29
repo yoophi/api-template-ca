@@ -58,6 +58,9 @@ def init_blueprint(app):
             },
         })
 
+    from app.main import main as main_bp
+    app.register_blueprint(main_bp, url_prefix='/main')
+
     from app.api import api as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
